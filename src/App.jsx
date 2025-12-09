@@ -4,15 +4,15 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import NavBar from './components/organisms/NavBar';
 import Footer from './components/organisms/Footer';
-import Home from './pages/Home';
-import Register from './pages/Register';
-import Login from './pages/Login';
+import Home from './pages/UserHome';
+import Register from './pages/auth/Register';  
+import Login from './pages/auth/Login';
 import UserHome from './pages/UserHome'; 
-import ProductDetails from './pages/ProductDetails'; 
+import ProductDetails from './pages/ProdDetalles';
 import Cart from './pages/Cart'; 
 import Blog from './pages/Blog'; 
 import HomeAdmin from './pages/admin/HomeAdmin';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './routes/ProtectedRoute';
 
 function App() {
   return (
@@ -26,7 +26,7 @@ function App() {
                  {/*rutas Prublicas*/}
                  <Route path="/" element={<Home />} />
                  <Route path="/register" element={<Register />} />
-                 <Route parh="/login" element={<Login />} />
+                 <Route path="/login" element={<Login />} />
 
                  {/*Ruta de catalogo*/}
                  <Route path="/products" element={<UserHome />} />
