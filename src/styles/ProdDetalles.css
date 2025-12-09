@@ -1,0 +1,16 @@
+.product-detail-img {
+  max-width: 400px;
+  margin: 0 auto;
+  display: block;
+}
+
+
+.navbar-custom-text .navbar-brand,
+.navbar-custom-text .nav-link {
+  color: #000000 !important; 
+}
+
+
+.navbar-custom-text .nav-link:hover {
+  color: #FFFFFF !important;
+}

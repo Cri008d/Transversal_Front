@@ -1,0 +1,11 @@
+.hero-section {
+  background-image: url('https://cdn.kiwilimon.com/articuloimagen/30131/28243.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
