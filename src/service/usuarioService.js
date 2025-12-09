@@ -1,6 +1,6 @@
-import api from "../api/axiosConfig";
+import api from "./axiosConfig";
 
-const BASE_URL = "/usuario";
+const BASE_URL = "/usuarios";
 
 export default {
     getAll: () => api.get(BASE_URL),
