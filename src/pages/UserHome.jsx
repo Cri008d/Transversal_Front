@@ -1,100 +1,69 @@
 import React, { useState, useEffect } from 'react';
-import Section from '../components/templates/Section';
-import Text from '../components/atoms/Text';
-import { useCart } from '../components/organisms/CartContext'; 
-import productoService from '../service/productoService'; // Usamos el servicio
+import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap'; // Usamos Bootstrap nativo para la estructura
+import CardsDisplay from '../components/organisms/CardsDisplay';
+import { useCartContext } from '../context/CartContext'; 
+import productoService from '../service/productoService'; 
 import { generarMensaje } from '../utils/GenerarMensaje';
 
 function UserHome() { 
     const [productos, setProductos] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { addToCart } = useCart(); 
+    const { addToCart } = useCartContext(); 
 
     useEffect(() => {
         const loadProducts = async () => {
             try {
                 setLoading(true);
-                // Usamos el servicio para obtener la data real
                 const response = await productoService.getAll(); 
                 
-                // Mapeo crucial: Adaptar la data del backend al formato de las Card
+                // Mapeamos asegurando que la imagen tenga un fallback si viene vacía
                 const mappedProducts = response.data.map(p => ({
-                    // Claves del Backend: idProducto, nombreProducto, precioProducto
+                    ...p, // Mantenemos todas las propiedades originales
                     id: p.idProducto, 
                     title: p.nombreProducto,
-                    image: p.urlImagen || 'https://via.placeholder.com/300?text=Planta', 
+                    image: p.urlImagen && p.urlImagen !== "" ? p.urlImagen : 'https://images.unsplash.com/photo-1459156212016-c812468e2115?q=80&w=300&auto=format&fit=crop', 
                     price: p.precioProducto,
-                    stock: p.stock,
-                    // Función para añadir al carrito, pasa el objeto completo
-                    onAddToCart: () => handleAddToCart(p),
-                    onViewDetails: `/productos/${p.idProducto}` 
+                    description: p.descripcionProducto
                 }));
                 
                 setProductos(mappedProducts);
             } catch (error) {
-                generarMensaje('No se pudo cargar el catálogo de productos.', 'danger');
                 console.error("Error al cargar productos:", error);
             } finally {
                 setLoading(false);
             }
         };
-
         loadProducts();
     }, []);
 
-    const handleAddToCart = (producto) => {
-        // La función espera el objeto producto completo para el contexto
-        addToCart(producto, 1); 
-        generarMensaje(`¡Añadido ${producto.nombreProducto} al carrito!`, 'success');
-    };
-
-    const qienesSomosContent = {
-        type: "text",
-        text: [
-            { content: "🌱 Bienvenido a Plantita", variant: "h1", className: "text-5xl font-bold mb-4 text-center text-green-700" },
-            { contente: "¿Quiénes Somos?", variant: "h2", className: "text-3xl font-medium mt-8 mb-3 border-b pb-2 text-gray-800" },
-            {
-                content: (
-                    <>
-                        <p className="mb-3">
-                            🌱 Somos una empresa dedicada a ofrecer productos frescos y de calidad. Nuestro objetivo es acercar lo mejor de la 
-                            naturaleza a tu mesa. Contamos con un equipo apasionado por la alimentación saludable y trabajamos día a día para que
-                            nuestros clientes tengan la mejor experiencia.
-                        </p>
-                        <p className="text-sm text-gray-500 mt-4">
-                            Plantita - Tu espacio para disfrutar y cuidar tus plantas. Encuentra productos frescos, tips y novedades en nuestro blog.
-                            Síguenos y mantente conectado. © 2025 Plantita. Todos los derechos reservados.
-                        </p>
-                    </>
-                ),
-                variant:"p",
-                className: "text-lg text-gray-600"
-            }
-        ]
-    };
-
-    const content = [
-        {
-            type: "text",
-            text: [{ content: "Catálogo de Plantitas y Productos", variant: "h1", className: "text-3xl font-light mb-6 text-center" }]
-        },
-        {
-            type: "cards", 
-            cards: productos
-        }
-    ];
-
-    if (loading) {
-        return <div className="text-center p-10"><Text>Cargando catálogo...</Text></div>;
-    }
-
-    if (productos.length === 0) {
-        return <div className="text-center p-10"><Text className="text-xl text-red-500">No hay productos disponibles.</Text></div>;
-    }
+    if (loading) return <div className="text-center p-5"><Spinner animation="border" variant="success" /></div>;
 
     return (
-        <div className="min-h-screen bg-white">
-            <Section content={content} className="container mx-auto p-4" />
+        <div className="min-vh-100">
+            {/* --- HERO SECTION (BANNER) --- */}
+            <div className="bg-success text-white py-5 mb-5" style={{ 
+                background: 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=1920&auto=format&fit=crop")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                borderRadius: '0 0 50px 50px' // Borde redondeado abajo
+            }}>
+                <Container className="text-center py-5">
+                    <h1 className="display-3 fw-bold mb-3">Bienvenido a Plantita 🌱</h1>
+                    <p className="lead mb-4">Descubre la naturaleza y dale vida a tu hogar con nuestra selección premium.</p>
+                </Container>
+            </div>
+
+            {/* --- SECCIÓN DE PRODUCTOS --- */}
+            <Container className="mb-5">
+                <h2 className="text-center mb-4 text-success fw-bold">Nuestros Productos Destacados</h2>
+                <p className="text-center text-muted mb-5">Encuentra la planta perfecta para ti</p>
+                
+                {productos.length === 0 ? (
+                   <Alert variant="warning" className="text-center">No hay productos disponibles en este momento.</Alert>
+                ) : (
+                    <CardsDisplay items={productos} />
+                )}
+            </Container>
         </div>
     );
 }

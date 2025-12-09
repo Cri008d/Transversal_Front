@@ -1,35 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../../context/CartContext'; 
+// CORRECCIÓN 1: Importar el nombre correcto del hook (useCartContext)
+import { useCartContext } from '../../context/CartContext'; 
 import { useAuth } from '../../context/AuthContext'; 
 import CheckoutSummary from '../../components/organisms/CheckoutSummary'; 
 import { generarMensaje } from '../../utils/GenerarMensaje';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap'; 
 
-// Importación de todos los servicios necesarios
 import direccionService from '../../service/direccionService'; 
 import ventaService from '../../service/ventaService'; 
-// Asumimos que estos servicios cargan los IDs estáticos
 import metodoPagoService from '../../service/metodoPagoService'; 
 import metodoEnvioService from '../../service/metodoEnvioService'; 
 
-// IDs del backend que asumimos
-const DEFAULT_ENVIO_ID = 1; // Asumir ID para 'Envío Estándar'
-const INITIAL_ESTADO_ID = 1; // Asumir ID 1 para 'PENDIENTE'
+const DEFAULT_ENVIO_ID = 1; 
+const INITIAL_ESTADO_ID = 1; 
 
 export default function Checkout() {
-    const { items, total, clearCart } = useCart();
+    // CORRECCIÓN 2: Usar las variables tal como se llaman en el Contexto
+    // cart (en lugar de items) y clear (en lugar de clearCart)
+    const { cart, total, clear } = useCartContext();
     const { user, loading: authLoading } = useAuth(); 
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
     const [addresses, setAddresses] = useState([]);
-    const [metodosPago, setMetodosPago] = useState([]); // Nuevo estado para los métodos de pago reales
+    const [metodosPago, setMetodosPago] = useState([]); 
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [selectedPagoId, setSelectedPagoId] = useState(null); 
     const [submitLoading, setSubmitLoading] = useState(false);
 
-    // Cargar Datos (Direcciones y Métodos de Pago/Envío)
     useEffect(() => {
         if (authLoading || !user || !user.idUsuario) {
             if (!authLoading) setLoading(false);
@@ -40,17 +39,14 @@ export default function Checkout() {
             try {
                 const [dirRes, pagoRes] = await Promise.all([
                     direccionService.getAllByUser(user.idUsuario), 
-                    metodoPagoService.getAll() // Cargar métodos de pago del backend
-                    // Si se necesita método de envío, también se carga aquí: metodoEnvioService.getAll()
+                    metodoPagoService.getAll() 
                 ]);
                 
-                // Mapear direcciones: usar 'id' para la clave Direcciones
                 const mappedAddresses = dirRes.data.map(addr => ({
-                    id: addr.id, // <-- Clave ID de la entidad Direcciones
+                    id: addr.id, 
                     direccion: `${addr.direccion}, ${addr.comuna?.nomComuna || 'N/A'}`
                 }));
                 
-                // Mapear métodos de pago: usar 'idMetPago' para la clave MetodoPago
                 const mappedPagos = pagoRes.data.map(p => ({
                     id: p.idMetPago,
                     nombre: p.nomMetPago 
@@ -60,7 +56,7 @@ export default function Checkout() {
                 setMetodosPago(mappedPagos);
 
                 if (mappedAddresses.length > 0) setSelectedAddress(mappedAddresses[0]);
-                if (mappedPagos.length > 0) setSelectedPagoId(mappedPagos[0].id); // Seleccionar el primer pago
+                if (mappedPagos.length > 0) setSelectedPagoId(mappedPagos[0].id); 
 
             } catch (error) {
                 generarMensaje('Error al cargar datos de checkout.', 'warning');
@@ -73,11 +69,11 @@ export default function Checkout() {
         fetchAllCheckoutData();
     }, [user, authLoading]);
 
-    // Manejar la confirmación de la orden (Venta)
     const handleConfirmOrder = async (e) => {
         e.preventDefault();
 
-        if (!selectedAddress || !selectedPagoId || items.length === 0) {
+        // CORRECCIÓN 3: Usar 'cart' en lugar de 'items' en las validaciones
+        if (!selectedAddress || !selectedPagoId || cart.length === 0) {
             generarMensaje('Faltan datos de envío, pago o el carrito está vacío.', 'warning');
             return;
         }
@@ -85,14 +81,13 @@ export default function Checkout() {
         setSubmitLoading(true);
 
         try {
-            // A. Mapeo de ítems del carrito a la estructura ProductoVenta
-            const productosVentaPayload = items.map(item => ({
+            // CORRECCIÓN 4: Usar 'cart' para mapear los productos
+            const productosVentaPayload = cart.map(item => ({
                 cantidad: item.quantity, 
                 precioProd: item.price, 
                 productoProducto: { idProducto: item.id } 
             }));
 
-            // B. Construir el PAYLOAD FINAL de la VENTA (CLAVES ANIDADAS)
             const orderPayload = {
                 totalVenta: total,
                 usuarioUsuario: { idUsuario: user.idUsuario }, 
@@ -103,11 +98,10 @@ export default function Checkout() {
                 productosVenta: productosVentaPayload, 
             };
 
-            // Llama al servicio de Venta
             const res = await ventaService.create(orderPayload);
             
             generarMensaje(`¡Pedido #${res.data.idVenta} realizado con éxito!`, 'success');
-            clearCart(); 
+            clear(); // CORRECCIÓN 5: Usar 'clear()' en lugar de 'clearCart()'
             navigate('/mis-compras');
 
         } catch (error) {
@@ -120,9 +114,9 @@ export default function Checkout() {
 
     if (loading) return <Container className="my-5 text-center"><Spinner animation="border" variant="success" /></Container>;
     if (!user) return <Container className="my-5 text-center"><Alert variant="info">Debes iniciar sesión para proceder al pago.</Alert></Container>;
-    if (items.length === 0) return <Container className="my-5 text-center"><Alert variant="warning">Tu carrito está vacío.</Alert></Container>;
+    // CORRECCIÓN 6: Usar 'cart' para verificar si está vacío
+    if (cart.length === 0) return <Container className="my-5 text-center"><Alert variant="warning">Tu carrito está vacío.</Alert></Container>;
 
-    // ... (El JSX de renderizado usa componentes de React Bootstrap/Tailwind CSS) ...
     return (
         <Container className="my-5">
             <h1 className="mb-4 text-3xl font-bold">🛒 Finalizar Compra</h1>
@@ -130,7 +124,6 @@ export default function Checkout() {
             <form onSubmit={handleConfirmOrder}>
                 <Row>
                     <Col lg={8} className="space-y-4">
-                        {/* 1. Dirección de Envío */}
                         <Card className="shadow-sm">
                             <Card.Header className="bg-success text-white">1. Dirección de Envío</Card.Header>
                             <Card.Body>
@@ -150,7 +143,6 @@ export default function Checkout() {
                             </Card.Body>
                         </Card>
                         
-                        {/* 2. Método de Pago */}
                         <Card className="shadow-sm">
                             <Card.Header className="bg-info text-white">2. Método de Pago</Card.Header>
                             <Card.Body>
@@ -172,7 +164,8 @@ export default function Checkout() {
                     </Col>
                     <Col lg={4}>
                         <div className="sticky-top" style={{ top: '20px' }}>
-                            <CheckoutSummary items={items} total={total} /> 
+                            {/* CORRECCIÓN 7: Pasar 'cart' como prop 'items' */}
+                            <CheckoutSummary items={cart} total={total} /> 
                             
                             <Button
                                 type="submit" 

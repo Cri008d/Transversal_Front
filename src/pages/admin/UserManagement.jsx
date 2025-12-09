@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Button, Table, Spinner, Modal, Form, Alert } from 'react-bootstrap';
-import userService from '../../service/userService'; // Servicio para Usuarios
+import userService from "../../service/usuarioService";
 import rolService from '../../service/rolService';   // Servicio para Roles
 import { generarMensaje } from '../../utils/GenerarMensaje';
 

@@ -1,5 +1,5 @@
 import React from "react";
-import DynamicTexts from "../molecules/DynamicTexts";
+import DynamicTexts from "../molecules/DynamicText";
 import Image from "../atoms/Image";
 import CardsDisplay from "../organisms/CardsDisplay";
 import DynamicTable from "../molecules/DynamicTable";

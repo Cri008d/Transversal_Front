@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // ... (Imports omitidos)
-import userService from '../../service/userService'; 
+import userService from "../../service/usuarioService";
 
 export default function Login() {
     const [credentials, setCredentials] = useState({ correo: '', contrasena: '' }); // Cambiado a 'contrasena'

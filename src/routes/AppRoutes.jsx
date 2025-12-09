@@ -4,28 +4,28 @@ import ProtectedRoute from './ProtectedRoute';
 import AdminRoute from './AdminRoute';     
 
 // =============== PÁGINAS PÚBLICAS / CLIENTE ===============
-// Importar las páginas 
-import Home from '../pages/Home'; // Quienes Somos
+import Home from '../pages/Home'; 
 import Producto from '../pages/Producto'; 
 import ProdDetalles from '../pages/ProdDetalles';
 import Blog from '../pages/Blog';
 import Contacto from '../pages/Contacto';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
+import Login from '../pages/auth/Login';       // <--- Recuerda que estas también las corregimos
+import Register from '../pages/auth/Register'; // <--- Recuerda que estas también las corregimos
 import Cart from "../pages/Cart";
+import UserHome from '../pages/UserHome';      // <--- ÚNICA importación de UserHome
 
 // =============== PÁGINAS DE USUARIO PROTEGIDAS ===============
 import PerfilUsuario from '../pages/user/PerfilUsuario';
 import MisCompras from '../pages/user/MisCompras';
 import MisDirecciones from '../pages/user/MisDirecciones';
 import Checkout from '../pages/user/Checkout'; 
-import UserHome from '../pages/user/UserHome'; // Catálogo principal
+// (Asegúrate de NO tener otra línea importando UserHome aquí abajo)
 
 // =============== PÁGINAS DE ADMINISTRACIÓN ===============
 import HomeAdmin from '../pages/admin/HomeAdmin';
 import ProductManagement from '../pages/admin/ProductManagement';
 import OrderManagement from '../pages/admin/OrderManagement';     
-import UserManagement from '../pages/admin/UserManagement';       
+import UserManagement from '../pages/admin/UserManagement';    
 
 
 function AppRoutes() {

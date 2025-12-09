@@ -1,6 +1,6 @@
 import { useState } from "react";
-import contactoInicial from "../data/contacto";
 
+import contactoInicial from "../data/contactoInicial";
 
 
 function Contacto() {
