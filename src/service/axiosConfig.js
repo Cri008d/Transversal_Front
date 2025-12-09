@@ -3,7 +3,7 @@ import axios from "axios";
 // Creamos la instancia de Axios
 const api = axios.create({
     // URL base de tu backend
-    baseURL: "http://localhost:8080/api/v1", 
+    baseURL: "https://plantita-6r0z.onrender.com/api/v1", 
     headers: {
         "Content-Type": "application/json",
     },
@@ -32,4 +32,5 @@ api.interceptors.request.use(
 );
 
 // Exportamos la instancia configurada para ser usada por todos los servicios
+
 export default api;
