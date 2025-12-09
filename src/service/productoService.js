@@ -2,7 +2,7 @@ import api from './axiosConfig';
 
 const PRODUCTOS_ENDPOINT = '/productos'; 
 
-// 1. Obtener Todos (GET)
+//  Obtener Todos (GET)
 export const obtenerTodosLosProductos = async () => {
   try {
     const response = await api.get(PRODUCTOS_ENDPOINT); 
@@ -13,7 +13,7 @@ export const obtenerTodosLosProductos = async () => {
   }
 };
 
-// 2. Obtener por ID (GET)
+// Obtener por ID (GET)
 export const obtenerProductoPorId = async (id) => {
   try {
     const response = await api.get(`${PRODUCTOS_ENDPOINT}/${id}`);
@@ -33,8 +33,7 @@ export const eliminarProducto = async (id) => {
     throw error;
   }
 };
-// OPERACIONES DE GUARDAR/ACTUALIZAR CON Y SIN IMAGENE
-// 3A. Guardar/Crear (POST) - SOLO DATOS JSON
+// Guardar/Crear (POST) 
 export const guardarProducto = async (producto) => {
   try {
     const response = await api.post(PRODUCTOS_ENDPOINT, producto); 
@@ -45,7 +44,7 @@ export const guardarProducto = async (producto) => {
   }
 };
 
-// 4A. Actualizar (PUT) - SOLO DATOS JSON
+// Actualizar (PUT)
 export const actualizarProducto = async (id, producto) => {
   try {
     const response = await api.put(`${PRODUCTOS_ENDPOINT}/${id}`, producto);
@@ -56,13 +55,6 @@ export const actualizarProducto = async (id, producto) => {
   }
 };
 
-// FUNCIONES ESPECIALES PARA SUBIR ARCHIVOS (MultipartFile)
-
-/**
- * Guarda un producto incluyendo un archivo (multipart/form-data).
- * @param {object} productoData - Los campos del producto (nombre, precio, etc.)
- * @param {File} archivoImagen - El objeto File de la imagen.
- */
 export const guardarProductoConImagen = async (productoData, archivoImagen) => {
   const formData = new FormData();
   formData.append('file', archivoImagen); 
@@ -72,7 +64,7 @@ export const guardarProductoConImagen = async (productoData, archivoImagen) => {
   
     const response = await api.post(`${PRODUCTOS_ENDPOINT}/con-imagen`, formData, {
         headers: {
-            'Content-Type': 'multipart/form-data' // Asegura el envío correcto
+            'Content-Type': 'multipart/form-data' 
         }
     }); 
     return response.data;
@@ -82,13 +74,6 @@ export const guardarProductoConImagen = async (productoData, archivoImagen) => {
   }
 };
 
-
-/**
- * Actualiza un producto incluyendo un archivo (multipart/form-data).
- * @param {number} id - El ID del producto.
- * @param {object} productoData - Los campos del producto (nombre, precio, etc.)
- * @param {File} archivoImagen - El objeto File de la imagen.
- */
 export const actualizarProductoConImagen = async (id, productoData, archivoImagen) => {
     const formData = new FormData();
     formData.append('file', archivoImagen);
@@ -106,3 +91,15 @@ export const actualizarProductoConImagen = async (id, productoData, archivoImage
         throw error;
     }
 };
+
+const productoService = {
+    getAll: obtenerTodosLosProductos,
+    getById: obtenerProductoPorId,
+    create: guardarProducto,
+    update: actualizarProducto,
+    delete: eliminarProducto,
+    createWithImage: guardarProductoConImagen,
+    updateWithImage: actualizarProductoConImagen
+};
+
+export default productoService;
