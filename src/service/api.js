@@ -3,7 +3,7 @@ import axios from "axios";
 const api = axios.create({
     baseURL: "http://localhost:8080/api/v1",
     headers: {
-        "Content-Type": "application/jason",
+        "Content-Type": "application/json",
     },
 });
 
@@ -11,10 +11,10 @@ const api = axios.create({
 api.interceptors.request.use(
     config => {
         //recupera el token
-        const token = locakStorage.getItem('token');
+        const token = localStorage.getItem('token');
         //si el token existe, lo adjuntamos al encabezado 'Authorization'
         if (token) {
-            config.headers.Authorization = 'Bearer ${token}';
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     }, 
