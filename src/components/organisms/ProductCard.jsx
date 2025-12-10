@@ -3,45 +3,42 @@ import { Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useCartContext } from '../../context/CartContext';
 
-// Usamos export default para evitar errores de importación
 export default function ProductCard({ product }) {
     const navigate = useNavigate();
     const { addToCart } = useCartContext(); 
 
     const handleAddToCart = (e) => {
-        e.stopPropagation(); // Evita que al dar click en añadir se abra el detalle
+        e.stopPropagation(); 
         addToCart(product); 
     };
 
     return (
-        <Card className="custom-card h-100 shadow-sm">
-            {/* Contenedor para controlar el tamaño de la imagen */}
-            <div className="card-img-wrapper cursor-pointer" onClick={() => navigate(`/productos/${product.id || product.idProducto}`)}>
+        // Usamos la nueva clase 'product-card-plantita'
+        <Card className="product-card-plantita h-100" onClick={() => navigate(`/productos/${product.id}`)} style={{ cursor: 'pointer' }}>
+            <div className="product-card-img-container">
                 <Card.Img 
                     variant="top" 
-                    src={product.image || product.urlImagen} 
-                    alt={product.title || product.nombreProducto} 
+                    src={product.image} 
+                    alt={product.title} 
+                    className="product-card-img"
                 />
             </div>
             
-            <Card.Body className="d-flex flex-column">
-                <Card.Title className="fw-bold text-success">
-                    {product.title || product.nombreProducto}
+            <Card.Body className="d-flex flex-column p-4">
+                <Card.Title className="product-card-title mb-3">
+                    {product.title}
                 </Card.Title>
                 
-                <Card.Text className="text-muted small flex-grow-1">
-                    {product.description || product.descripcionProducto || "Sin descripción disponible."}
+                <Card.Text className="text-muted mb-4 flex-grow-1">
+                    {product.description || "Sin descripción disponible."}
                 </Card.Text>
                 
-                <div className="mt-3 d-flex justify-content-between align-items-center">
-                    <span className="h5 mb-0 fw-bold">
-                        ${(product.price || product.precioProducto || 0).toLocaleString('es-CL')}
+                <div className="d-flex justify-content-between align-items-center mt-auto">
+                    <span className="product-card-price">
+                        ${product.price.toLocaleString('es-CL')}
                     </span>
-                    <Button 
-                        className="btn-custom" 
-                        size="sm" 
-                        onClick={handleAddToCart}
-                    >
+                    {/* Usamos la nueva clase 'btn-plantita' */}
+                    <Button className="btn-plantita" onClick={handleAddToCart}>
                         + Agregar
                     </Button>
                 </div>
