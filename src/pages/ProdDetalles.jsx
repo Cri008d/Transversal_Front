@@ -1,7 +1,7 @@
 import { Container, Card } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { useCart } from "../components/organisms/CartContext.jsx";
-import products from '../data/Producto.js';
+import products from '../data/producto.js';
 import Image from '../components/atoms/Image.jsx';
 import Text from '../components/atoms/Text.jsx';
 import '../styles/ProdDetalles.css';
@@ -41,5 +41,6 @@ function ProdDetalles() {
     
 );
 }
+
 
 export default ProdDetalles;
